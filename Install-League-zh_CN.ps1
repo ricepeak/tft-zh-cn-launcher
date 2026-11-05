@@ -4,7 +4,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$metadataPath = 'C:\ProgramData\Riot Games\Metadata\league_of_legends.live\league_of_legends.live.product_settings.yaml'
+$metadataPath = 'C:\ProgramData\Riot Games\Metadata\teamfighttactics.live\teamfighttactics.live.product_settings.yaml'
 $installRoot = Join-Path $env:LOCALAPPDATA 'League-zh_CN-Launcher'
 $desktopPath = [Environment]::GetFolderPath('Desktop')
 $shortcutPath = Join-Path $desktopPath 'League of Legends - Simplified Chinese.lnk'
@@ -31,8 +31,8 @@ try {
             $installs = [System.IO.File]::ReadAllText($installsPath) | ConvertFrom-Json
             $leagueRoot = $installs.associated_client.PSObject.Properties |
                 Where-Object {
-                    $_.Name.Replace('/', '\').TrimEnd('\') -match '\\League of Legends$' -and
-                    (Test-Path -LiteralPath (Join-Path $_.Name.Replace('/', '\') 'LeagueClient.exe') -PathType Leaf)
+                    $_.Name.Replace('/', '\').TrimEnd('\') -match '\\Teamfight Tactics\\Live$' -and
+                    (Test-Path -LiteralPath (Join-Path $_.Name.Replace('/', '\') 'TFTClient.exe') -PathType Leaf)
                 } |
                 Select-Object -First 1 -ExpandProperty Name
         }
@@ -40,9 +40,9 @@ try {
             throw 'Could not determine the League installation folder from Riot installation records or metadata.'
         }
     }
-    $leagueClient = Join-Path $leagueRoot.Replace('/', '\').TrimEnd('\') 'LeagueClient.exe'
+    $leagueClient = Join-Path $leagueRoot.Replace('/', '\').TrimEnd('\') 'TFTClient.exe'
     if (-not (Test-Path -LiteralPath $leagueClient -PathType Leaf)) {
-        throw "LeagueClient.exe was not found at $leagueClient"
+        throw "TFTClient.exe was not found at $leagueClient"
     }
     if (-not (Test-Path -LiteralPath $scriptHost -PathType Leaf)) {
         throw 'Windows Script Host was not found on this computer.'
