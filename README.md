@@ -1,6 +1,16 @@
-# League of Legends zh_CN Launcher
+# Teamfight Tactics zh_CN Launcher
 
 **English** | [简体中文](README.zh-CN.md)
+
+---
+
+NA TFT (Teamfight Tactics) v18.6 standalone client language change tool.
+Available to `2026-11-05`
+Based on [Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher). Currently, it is only available and will be optimized as soon as possible.
+
+🔥Note: After running, the Riot client will repeatedly experience stubborn updates of about 300kb, just click a few times.
+
+---
 
 A small Windows helper that opens Riot Client and continuously keeps League's
 active metadata locale set to Simplified Chinese (`zh_CN`).
