@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $targetLocale = 'zh_CN'
-$metadataPath = 'C:\ProgramData\Riot Games\Metadata\league_of_legends.live\league_of_legends.live.product_settings.yaml'
+$metadataPath = 'C:\ProgramData\Riot Games\Metadata\teamfighttactics.live\teamfighttactics.live.product_settings.yaml'
 $appDataRoot = Join-Path $env:LOCALAPPDATA 'League-zh_CN-Launcher'
 $logPath = Join-Path $appDataRoot 'launcher.log'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -14,6 +14,7 @@ $processNames = @(
     'RiotClientUx',
     'RiotClientUxRender',
     'LeagueClient',
+    'TFTClient',
     'LeagueClientUx',
     'LeagueClientUxRender',
     'League of Legends',
@@ -146,18 +147,18 @@ function Get-MetadataLastWriteUtc {
 }
 
 function Test-MatchRunning {
-    return @(Get-Process -Name 'League of Legends', 'TFTClient-Win64-Shipping' -ErrorAction SilentlyContinue).Count -gt 0
+    return @(Get-Process -Name 'TFTClient', 'League of Legends', 'TFTClient-Win64-Shipping' -ErrorAction SilentlyContinue).Count -gt 0
 }
 
 function Test-LeagueClientRunning {
-    return @(Get-Process -Name 'LeagueClient', 'LeagueClientUx', 'LeagueClientUxRender' -ErrorAction SilentlyContinue).Count -gt 0
+    return @(Get-Process -Name 'TFTClient', 'LeagueClient', 'LeagueClientUx', 'LeagueClientUxRender' -ErrorAction SilentlyContinue).Count -gt 0
 }
 
 function Restart-RiotClientOnce {
     param([string]$RiotClient)
 
     Write-LauncherLog 'EN update state detected; restarting Riot Client once after restoring zh_CN.'
-    @('RiotClientUxRender', 'RiotClientUx', 'RiotClientServices') | ForEach-Object {
+    @('TFTClient', 'RiotClientUxRender', 'RiotClientUx', 'RiotClientServices') | ForEach-Object {
         Get-Process -Name $_ -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
     }
 
@@ -165,7 +166,7 @@ function Restart-RiotClientOnce {
     do {
         $riotProcesses = @(
             Get-Process -ErrorAction SilentlyContinue |
-                Where-Object { $_.ProcessName -in @('RiotClientServices', 'RiotClientUx', 'RiotClientUxRender') }
+                Where-Object { $_.ProcessName -in @('TFTClient', 'RiotClientServices', 'RiotClientUx', 'RiotClientUxRender') }
         )
         if ($riotProcesses.Count -eq 0) {
             break
