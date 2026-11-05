@@ -2,6 +2,16 @@
 
 [English](README.md) | **简体中文**
 
+---
+
+美服 TFT (Teamfight Tactics) v18.6 独立客户端汉化工具
+截止 `2026-11-05` 可用
+基于[Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher)。目前仅可用状态，会尽快优化代码
+
+🔥注意：运行后 Riot 客户端会多次出现比较顽固的 300kb 左右的更新，多点几次即可
+
+---
+
 这是一个适用于 Windows 的小工具。它会打开 Riot Client，并持续保持英雄联盟
 元数据中的当前语言为简体中文（`zh_CN`）。
 
