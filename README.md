@@ -2,18 +2,10 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
----
-
-NA TFT (Teamfight Tactics) v18.6 standalone client language change tool.
-Available to `2026-11-05`
-Based on [Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher). Currently, it is only available and will be optimized as soon as possible.
-
-🔥Note: After running, the Riot client will repeatedly experience stubborn updates of about 300kb, just click a few times.
-
----
-
-A small Windows helper that opens Riot Client and continuously keeps League's
+A small Windows helper that opens Riot Client and continuously keeps TFT's
 active metadata locale set to Simplified Chinese (`zh_CN`).
+
+🔥 Only for TFT, league of legend is not included. NA TFT (Teamfight Tactics) v18.6 standalone client language change tool, based on [Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher).
 
 > [!IMPORTANT]
 > This is an unofficial community workaround. It is not affiliated with,
@@ -22,8 +14,8 @@ active metadata locale set to Simplified Chinese (`zh_CN`).
 
 ## What it does
 
-- Opens Riot Client normally without automatically starting League.
-- Watches `league_of_legends.live.product_settings.yaml` while Riot or the League client is open
+- Opens Riot Client normally without automatically starting TFT.
+- Watches `teamfighttactics.live.product_settings.yaml` while Riot or the TFT client is open
   and restores its active `locale` whenever Riot changes it to `en_US`.
 - When a fresh Riot session resets the locale to `en_US`, restores `zh_CN`,
   restarts Riot Client once, and continues watching across matches. This makes
@@ -31,8 +23,8 @@ active metadata locale set to Simplified Chinese (`zh_CN`).
   full English language-package download.
 - Allows the user to manually click **Update** or **Play** after Riot reopens.
 - Does not modify Riot Client settings, `default_locale`, `available_locales`, or
-  `LeagueClientSettings.yaml`.
-- Creates a desktop shortcut using the installed League client icon.
+  `TFTClientSettings.yaml`.
+- Creates a desktop shortcut using the installed TFT client icon.
 - Starts the watcher without a console window from the desktop shortcut.
 - Leaves Riot configuration files writable so normal patching and repair are
   not intentionally blocked.
@@ -40,35 +32,35 @@ active metadata locale set to Simplified Chinese (`zh_CN`).
 ## Requirements
 
 - Windows 10 or Windows 11
-- Riot Client and the live League of Legends client already installed
-- League launched normally at least once
+- Riot Client and the live Teamfight Tactics client already installed
+- TFT launched normally at least once
 
 ## Installation
 
-1. Download `League-zh_CN-Portable-v1.2.5.zip` from the latest
+1. Download `TFT-zh_CN-Portable-v1.2.5.zip` from the latest
    [GitHub Release](../../releases/latest).
 2. Extract the ZIP. Do not run the installer from inside the ZIP preview.
-3. Double-click **`Install League zh_CN.cmd`**.
-4. Launch League from **League of Legends - Simplified Chinese** on the desktop.
+3. Double-click **`Install TFT zh_CN.cmd`**.
+4. Launch TFT from **TFT_SC** on the desktop.
 
 The launcher is installed for the current Windows user under:
 
 ```text
-%LOCALAPPDATA%\League-zh_CN-Launcher
+%LOCALAPPDATA%\TFT-zh_CN-Launcher
 ```
 
 ## Uninstallation
 
-Double-click **`Uninstall League zh_CN.cmd`** in the installed folder shown
+Double-click **`Uninstall TFT zh_CN.cmd`** in the installed folder shown
 above. This removes the launcher and its desktop shortcut. It does not remove
-Riot Client or League of Legends.
+Riot Client or Teamfight Tactics.
 
 ## Troubleshooting
 
 The launcher writes a diagnostic log to:
 
 ```text
-%LOCALAPPDATA%\League-zh_CN-Launcher\launcher.log
+%LOCALAPPDATA%\TFT-zh_CN-Launcher\launcher.log
 ```
 
 If Windows blocks downloaded script files, right-click the extracted ZIP or
@@ -78,15 +70,14 @@ again.
 ## How it works
 
 The launcher opens Riot Client normally and monitors only the active `locale`
-field in League's product metadata. When it observes Riot's fresh `en_US` reset,
+field in TFT's product metadata. When it observes Riot's fresh `en_US` reset,
 it restores `zh_CN` and restarts Riot Client once. It then keeps restoring
-`zh_CN` in the League client lobby. When a League of Legends or Teamfight
+`zh_CN` in the TFT client lobby. When a Teamfight
 Tactics match executable starts, the helper pauses all metadata access. It
 resumes after the match, so later account changes and updates are still
-monitored. The helper exits ten seconds after Riot and League are both closed.
+monitored. The helper exits ten seconds after Riot and TFT are both closed.
 It never restarts Riot repeatedly within one launcher run.
 
 ## License
 
-No license has been granted yet. All rights are reserved by the repository
-owner unless a license file is added later.
+The same as.
