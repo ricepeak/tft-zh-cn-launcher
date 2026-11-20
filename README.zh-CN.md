@@ -33,7 +33,7 @@
 ## 安装方法
 
 1. 从最新的 [GitHub Release](../../releases/latest) 下载
-   `TFT-zh_CN-Portable-v1.2.5.zip`。
+   `TFT-zh_CN-Portable-v2.0.zip`。
 2. 完整解压 ZIP；不要直接在压缩包预览窗口中运行安装程序。
 3. 双击 **`Install TFT zh_CN.cmd`**。
 4. 以后使用桌面上的 **TFT_SC** 启动游戏。
