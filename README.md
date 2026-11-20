@@ -37,7 +37,7 @@ active metadata locale set to Simplified Chinese (`zh_CN`).
 
 ## Installation
 
-1. Download `TFT-zh_CN-Portable-v1.2.5.zip` from the latest
+1. Download `TFT-zh_CN-Portable-v2.0.zip` from the latest
    [GitHub Release](../../releases/latest).
 2. Extract the ZIP. Do not run the installer from inside the ZIP preview.
 3. Double-click **`Install TFT zh_CN.cmd`**.
