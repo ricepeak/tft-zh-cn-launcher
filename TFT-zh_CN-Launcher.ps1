@@ -6,19 +6,20 @@ param(
 $ErrorActionPreference = 'Stop'
 $targetLocale = 'zh_CN'
 $metadataPath = 'C:\ProgramData\Riot Games\Metadata\teamfighttactics.live\teamfighttactics.live.product_settings.yaml'
-$appDataRoot = Join-Path $env:LOCALAPPDATA 'League-zh_CN-Launcher'
+$appDataRoot = Join-Path $env:LOCALAPPDATA 'TFT-zh_CN-Launcher'
 $logPath = Join-Path $appDataRoot 'launcher.log'
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 $processNames = @(
     'RiotClientServices',
     'RiotClientUx',
     'RiotClientUxRender',
-    'LeagueClient',
     'TFTClient',
+    'TFTClient-Win64-Shipping',
+    'BootstrapPackagedGame',
+    'LeagueClient',
     'LeagueClientUx',
     'LeagueClientUxRender',
-    'League of Legends',
-    'TFTClient-Win64-Shipping'
+    'League of Legends'
 )
 
 if (-not (Test-Path -LiteralPath $appDataRoot)) {
@@ -58,14 +59,14 @@ function Find-RiotClient {
     if (Test-Path -LiteralPath $metadataPath -PathType Leaf) {
         try {
             $metadata = [System.IO.File]::ReadAllText($metadataPath)
-            $leagueRoot = Get-YamlValue -Text $metadata -Key 'product_install_full_path'
+            $TFTRoot = Get-YamlValue -Text $metadata -Key 'product_install_full_path'
             $productRoot = Get-YamlValue -Text $metadata -Key 'product_install_root'
             if (-not [string]::IsNullOrWhiteSpace($productRoot)) {
                 $candidates.Add((Join-Path $productRoot.Replace('/', '\') 'Riot Client\RiotClientServices.exe'))
             }
-            if (-not [string]::IsNullOrWhiteSpace($leagueRoot)) {
-                $leagueRoot = $leagueRoot.Replace('/', '\').TrimEnd('\')
-                $candidates.Add((Join-Path (Split-Path -Parent $leagueRoot) 'Riot Client\RiotClientServices.exe'))
+            if (-not [string]::IsNullOrWhiteSpace($TFTRoot)) {
+                $TFTRoot = $TFTRoot.Replace('/', '\').TrimEnd('\')
+                $candidates.Add((Join-Path (Split-Path -Parent $TFTRoot) 'Riot Client\RiotClientServices.exe'))
             }
         }
         catch [System.IO.IOException] {
@@ -84,7 +85,7 @@ function Find-RiotClient {
     return $riotClient
 }
 
-function Set-ActiveLeagueLocale {
+function Set-ActiveTFTLocale {
     if (-not (Test-Path -LiteralPath $metadataPath -PathType Leaf)) {
         return $false
     }
@@ -115,7 +116,7 @@ function Set-ActiveLeagueLocale {
     }
 }
 
-function Get-ActiveLeagueLocale {
+function Get-ActiveTFTLocale {
     if (-not (Test-Path -LiteralPath $metadataPath -PathType Leaf)) {
         return $null
     }
@@ -147,18 +148,18 @@ function Get-MetadataLastWriteUtc {
 }
 
 function Test-MatchRunning {
-    return @(Get-Process -Name 'TFTClient', 'League of Legends', 'TFTClient-Win64-Shipping' -ErrorAction SilentlyContinue).Count -gt 0
+    return @(Get-Process -Name 'TFTClient', 'TFTClient-Win64-Shipping', 'League of Legends' -ErrorAction SilentlyContinue).Count -gt 0
 }
 
-function Test-LeagueClientRunning {
-    return @(Get-Process -Name 'TFTClient', 'LeagueClient', 'LeagueClientUx', 'LeagueClientUxRender' -ErrorAction SilentlyContinue).Count -gt 0
+function Test-TFTClientRunning {
+    return @(Get-Process -Name 'TFTClient', 'BootstrapPackagedGame', 'LeagueClient', 'LeagueClientUx', 'LeagueClientUxRender' -ErrorAction SilentlyContinue).Count -gt 0
 }
 
 function Restart-RiotClientOnce {
     param([string]$RiotClient)
 
     Write-LauncherLog 'EN update state detected; restarting Riot Client once after restoring zh_CN.'
-    @('TFTClient', 'RiotClientUxRender', 'RiotClientUx', 'RiotClientServices') | ForEach-Object {
+    @('TFTClient', 'BootstrapPackagedGame', 'RiotClientUxRender', 'RiotClientUx', 'RiotClientServices') | ForEach-Object {
         Get-Process -Name $_ -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
     }
 
@@ -166,7 +167,7 @@ function Restart-RiotClientOnce {
     do {
         $riotProcesses = @(
             Get-Process -ErrorAction SilentlyContinue |
-                Where-Object { $_.ProcessName -in @('TFTClient', 'RiotClientServices', 'RiotClientUx', 'RiotClientUxRender') }
+                Where-Object { $_.ProcessName -in @('TFTClient', 'BootstrapPackagedGame', 'RiotClientServices', 'RiotClientUx', 'RiotClientUxRender') }
         )
         if ($riotProcesses.Count -eq 0) {
             break
@@ -180,7 +181,7 @@ function Restart-RiotClientOnce {
     Write-LauncherLog 'Riot Client restarted normally; active-locale watcher is still running.'
 }
 
-function Test-RiotOrLeagueRunning {
+function Test-RiotOrTFTRunning {
     return @(
         Get-Process -ErrorAction SilentlyContinue |
             Where-Object { $_.ProcessName -in $processNames }
@@ -196,35 +197,35 @@ try {
         exit 0
     }
 
-    $alreadyRunning = Test-RiotOrLeagueRunning
+    $alreadyRunning = Test-RiotOrTFTRunning
     $baselineMetadataWriteUtc = Get-MetadataLastWriteUtc
-    $initialLocale = Get-ActiveLeagueLocale
+    $initialLocale = Get-ActiveTFTLocale
     $restartPerformed = $false
     if (-not $alreadyRunning) {
         Start-Process -FilePath $riotClient
         Write-LauncherLog 'Riot Client started normally.'
     }
     else {
-        Write-LauncherLog 'Attached to the existing Riot/League session.'
+        Write-LauncherLog 'Attached to the existing Riot/TFT session.'
     }
 
     if (-not (Test-MatchRunning)) {
-        Set-ActiveLeagueLocale | Out-Null
+        Set-ActiveTFTLocale | Out-Null
     }
 
-    if ($alreadyRunning -and $initialLocale -eq 'en_US' -and -not (Test-LeagueClientRunning) -and -not (Test-MatchRunning)) {
+    if ($alreadyRunning -and $initialLocale -eq 'en_US' -and -not (Test-TFTClientRunning) -and -not (Test-MatchRunning)) {
         Restart-RiotClientOnce -RiotClient $riotClient
         $restartPerformed = $true
     }
 
-    Write-LauncherLog 'Watching active metadata locale while Riot or League is open; pausing during matches.'
+    Write-LauncherLog 'Watching active metadata locale while Riot or TFT is open; pausing during matches.'
 
     $noProcessSince = $null
     $matchWasRunning = $false
     while ($true) {
         if (Test-MatchRunning) {
             if (-not $matchWasRunning) {
-                Write-LauncherLog 'League or TFT match started; locale monitoring paused.'
+                Write-LauncherLog 'TFT match started; locale monitoring paused.'
                 $matchWasRunning = $true
             }
             $noProcessSince = $null
@@ -232,11 +233,11 @@ try {
             continue
         }
         if ($matchWasRunning) {
-            Write-LauncherLog 'League or TFT match ended; locale monitoring resumed.'
+            Write-LauncherLog 'TFT match ended; locale monitoring resumed.'
             $matchWasRunning = $false
         }
 
-        $observedLocale = Get-ActiveLeagueLocale
+        $observedLocale = Get-ActiveTFTLocale
         $metadataWriteUtc = Get-MetadataLastWriteUtc
         $freshEnReset = (
             -not $alreadyRunning -and
@@ -248,21 +249,21 @@ try {
         if (Test-MatchRunning) {
             continue
         }
-        Set-ActiveLeagueLocale | Out-Null
+        Set-ActiveTFTLocale | Out-Null
 
-        if ($freshEnReset -and -not (Test-LeagueClientRunning) -and -not (Test-MatchRunning)) {
+        if ($freshEnReset -and -not (Test-TFTClientRunning) -and -not (Test-MatchRunning)) {
             Restart-RiotClientOnce -RiotClient $riotClient
             $restartPerformed = $true
         }
 
-        if (Test-RiotOrLeagueRunning) {
+        if (Test-RiotOrTFTRunning) {
             $noProcessSince = $null
         }
         elseif ($null -eq $noProcessSince) {
             $noProcessSince = Get-Date
         }
         elseif ((Get-Date) -ge $noProcessSince.AddSeconds(10)) {
-            Write-LauncherLog 'Riot and League are closed; locale monitoring finished.'
+            Write-LauncherLog 'Riot and TFT are closed; locale monitoring finished.'
             break
         }
 
@@ -274,8 +275,8 @@ catch {
     Write-LauncherLog "ERROR: $($_.Exception.Message)"
     Add-Type -AssemblyName PresentationFramework
     [System.Windows.MessageBox]::Show(
-        "Could not keep League in Simplified Chinese.`n`n$($_.Exception.Message)`n`nLog: $logPath",
-        'League zh_CN launcher',
+        "Could not keep TFT in Simplified Chinese.`n`n$($_.Exception.Message)`n`nLog: $logPath",
+        'TFT zh_CN launcher',
         'OK',
         'Error'
     ) | Out-Null
