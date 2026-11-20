@@ -6,7 +6,7 @@ Set files = CreateObject("Scripting.FileSystemObject")
 
 folder = files.GetParentFolderName(WScript.ScriptFullName)
 powershell = files.BuildPath(shell.ExpandEnvironmentStrings("%SystemRoot%"), "System32\WindowsPowerShell\v1.0\powershell.exe")
-launcher = files.BuildPath(folder, "League-zh_CN-Launcher.ps1")
+launcher = files.BuildPath(folder, "TFT-zh_CN-Launcher.ps1")
 command = """" & powershell & """ -NoLogo -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & launcher & """"
 
 If WScript.Arguments.Count > 0 Then
