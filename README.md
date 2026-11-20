@@ -5,7 +5,7 @@
 A small Windows helper that opens Riot Client and continuously keeps TFT's
 active metadata locale set to Simplified Chinese (`zh_CN`).
 
-🔥 Only for TFT, league of legend is not included. NA TFT (Teamfight Tactics) v18.6 standalone client language change tool, based on [Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher).
+🔥 Only for TFT, league of legend is not included. NA TFT (Teamfight Tactics) v18.6 standalone client language change tool, tests show in-game Chinese voice acting. Based on [Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher).
 
 > [!IMPORTANT]
 > This is an unofficial community workaround. It is not affiliated with,
