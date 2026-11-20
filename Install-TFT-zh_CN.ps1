@@ -5,9 +5,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $metadataPath = 'C:\ProgramData\Riot Games\Metadata\teamfighttactics.live\teamfighttactics.live.product_settings.yaml'
-$installRoot = Join-Path $env:LOCALAPPDATA 'League-zh_CN-Launcher'
+$installRoot = Join-Path $env:LOCALAPPDATA 'TFT-zh_CN-Launcher'
 $desktopPath = [Environment]::GetFolderPath('Desktop')
-$shortcutPath = Join-Path $desktopPath 'League of Legends - Simplified Chinese.lnk'
+$shortcutPath = Join-Path $desktopPath 'TFT_SC.lnk'
 $sourceRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $scriptHost = "$env:SystemRoot\System32\wscript.exe"
 
@@ -20,41 +20,41 @@ function Get-YamlValue {
 
 try {
     if (-not (Test-Path -LiteralPath $metadataPath -PathType Leaf)) {
-        throw 'League of Legends live metadata was not found. Install League before running this installer.'
+        throw 'TFT live metadata was not found. Install TFT before running this installer.'
     }
 
     $metadata = [System.IO.File]::ReadAllText($metadataPath)
-    $leagueRoot = Get-YamlValue -Text $metadata -Key 'product_install_full_path'
-    if ([string]::IsNullOrWhiteSpace($leagueRoot)) {
+    $TFTRoot = Get-YamlValue -Text $metadata -Key 'product_install_full_path'
+    if ([string]::IsNullOrWhiteSpace($TFTRoot)) {
         $installsPath = Join-Path $env:ProgramData 'Riot Games\RiotClientInstalls.json'
         if (Test-Path -LiteralPath $installsPath -PathType Leaf) {
             $installs = [System.IO.File]::ReadAllText($installsPath) | ConvertFrom-Json
-            $leagueRoot = $installs.associated_client.PSObject.Properties |
+            $TFTRoot = $installs.associated_client.PSObject.Properties |
                 Where-Object {
                     $_.Name.Replace('/', '\').TrimEnd('\') -match '\\Teamfight Tactics\\Live$' -and
                     (Test-Path -LiteralPath (Join-Path $_.Name.Replace('/', '\') 'TFTClient.exe') -PathType Leaf)
                 } |
                 Select-Object -First 1 -ExpandProperty Name
         }
-        if ([string]::IsNullOrWhiteSpace($leagueRoot)) {
-            throw 'Could not determine the League installation folder from Riot installation records or metadata.'
+        if ([string]::IsNullOrWhiteSpace($TFTRoot)) {
+            throw 'Could not determine the TFT installation folder from Riot installation records or metadata.'
         }
     }
-    $leagueClient = Join-Path $leagueRoot.Replace('/', '\').TrimEnd('\') 'TFTClient.exe'
-    if (-not (Test-Path -LiteralPath $leagueClient -PathType Leaf)) {
-        throw "TFTClient.exe was not found at $leagueClient"
+    $TFTClient = Join-Path $TFTRoot.Replace('/', '\').TrimEnd('\') 'TFTClient.exe'
+    if (-not (Test-Path -LiteralPath $TFTClient -PathType Leaf)) {
+        throw "TFTClient.exe was not found at $TFTClient"
     }
     if (-not (Test-Path -LiteralPath $scriptHost -PathType Leaf)) {
         throw 'Windows Script Host was not found on this computer.'
     }
 
     New-Item -ItemType Directory -Path $installRoot -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $sourceRoot 'League-zh_CN-Launcher.ps1') -Destination $installRoot -Force
-    Copy-Item -LiteralPath (Join-Path $sourceRoot 'Launch-League-zh_CN.vbs') -Destination $installRoot -Force
-    Copy-Item -LiteralPath (Join-Path $sourceRoot 'Uninstall-League-zh_CN.ps1') -Destination $installRoot -Force
-    Copy-Item -LiteralPath (Join-Path $sourceRoot 'Uninstall League zh_CN.cmd') -Destination $installRoot -Force
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'TFT-zh_CN-Launcher.ps1') -Destination $installRoot -Force
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'Launch-TFT-zh_CN.vbs') -Destination $installRoot -Force
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'Uninstall-TFT-zh_CN.ps1') -Destination $installRoot -Force
+    Copy-Item -LiteralPath (Join-Path $sourceRoot 'Uninstall TFT zh_CN.cmd') -Destination $installRoot -Force
 
-    $installedLauncher = Join-Path $installRoot 'Launch-League-zh_CN.vbs'
+    $installedLauncher = Join-Path $installRoot 'Launch-TFT-zh_CN.vbs'
     $validation = Start-Process -FilePath $scriptHost -ArgumentList @('//B', '//Nologo', "`"$installedLauncher`"", '/validate') -Wait -PassThru
     if ($validation.ExitCode -ne 0) { throw 'Hidden launcher validation failed.' }
 
@@ -63,15 +63,15 @@ try {
     $shortcut.TargetPath = $scriptHost
     $shortcut.Arguments = "`"$installedLauncher`""
     $shortcut.WorkingDirectory = $installRoot
-    $shortcut.IconLocation = "$leagueClient,0"
-    $shortcut.Description = 'Launch League of Legends in Simplified Chinese (zh_CN)'
+    $shortcut.IconLocation = "$TFTClient,0"
+    $shortcut.Description = 'Launch Teamfight Tactics in Simplified Chinese (zh_CN)'
     $shortcut.Save()
 
     if (-not $Quiet) {
         Add-Type -AssemblyName PresentationFramework
         [System.Windows.MessageBox]::Show(
-            "Installation complete.`n`nUse the new desktop shortcut:`nLeague of Legends - Simplified Chinese",
-            'League zh_CN launcher',
+            "Installation complete.`n`nUse the new desktop shortcut:`nTFT_SC",
+            'TFT zh_CN launcher',
             'OK',
             'Information'
         ) | Out-Null
@@ -81,7 +81,7 @@ catch {
     Add-Type -AssemblyName PresentationFramework
     [System.Windows.MessageBox]::Show(
         "Installation failed.`n`n$($_.Exception.Message)",
-        'League zh_CN launcher',
+        'TFT zh_CN launcher',
         'OK',
         'Error'
     ) | Out-Null
