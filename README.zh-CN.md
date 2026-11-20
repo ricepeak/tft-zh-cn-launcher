@@ -5,6 +5,8 @@
 这是一个适用于 Windows 的小工具。它会打开 Riot Client，并持续保持云顶之弈
 元数据中的当前语言为简体中文（`zh_CN`）。
 
+🔥 仅适用云顶之弈，不适用英雄联盟。v18.6 版本后的美服 TFT (Teamfight Tactics) 独立客户端内语言修改工具，经测试有对局内**中文语音**。基于 [Karl-Cao/league-zh-cn-launcher](https://github.com/Karl-Cao/league-zh-cn-launcher)。
+
 > [!IMPORTANT]
 > 这是由社区制作的非官方解决方案，与 Riot Games 无隶属、认可或支持关系。
 > Riot Client 未来的更新可能会改变配置格式，届时本项目也需要相应更新。
